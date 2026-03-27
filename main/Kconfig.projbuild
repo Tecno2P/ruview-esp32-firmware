@@ -1,0 +1,209 @@
+menu "CSI Node Configuration"
+
+    config CSI_NODE_ID
+        int "Node ID (0-255)"
+        default 1
+        range 0 255
+
+    config CSI_TARGET_IP
+        string "Aggregator IP address"
+        default "192.168.1.100"
+
+    config CSI_TARGET_PORT
+        int "Aggregator UDP port"
+        default 5005
+        range 1024 65535
+
+    config CSI_WIFI_SSID
+        string "WiFi SSID"
+        default "wifi-densepose"
+
+    config CSI_WIFI_PASSWORD
+        string "WiFi Password"
+        default ""
+
+    config CSI_WIFI_CHANNEL
+        int "WiFi Channel (1-13)"
+        default 6
+        range 1 13
+
+endmenu
+
+menu "Board Selection"
+
+    choice BOARD_TARGET
+        prompt "Select your ESP32 board"
+        default BOARD_ESP32_WROOM
+
+        config BOARD_ESP32_WROOM
+            bool "ESP32-WROOM-32/32D/32E (4MB, no PSRAM)"
+        config BOARD_ESP32_WROVER
+            bool "ESP32-WROVER/WROVER-B (4MB + PSRAM)"
+        config BOARD_ESP32_DEVKITC
+            bool "ESP32-DevKitC v4 (4MB, no PSRAM)"
+        config BOARD_NODEMCU32S
+            bool "NodeMCU-32S / AZ-Delivery (4MB)"
+        config BOARD_D1MINI_ESP32
+            bool "LOLIN D1 Mini ESP32 (4MB)"
+        config BOARD_ESP32_SOLO
+            bool "ESP32-SOLO-1 (single core, 4MB)"
+        config BOARD_ESP32_PICO
+            bool "ESP32-PICO-D4 / PICO-KIT (4MB embedded)"
+        config BOARD_ESP32S3_DEVKITC
+            bool "ESP32-S3-DevKitC (8MB + PSRAM, original)"
+    endchoice
+
+endmenu
+
+menu "mmWave Sensor GPIO Pins"
+
+    config MMWAVE_TX_PIN
+        int "mmWave UART TX GPIO"
+        default 17
+        range 0 48
+
+    config MMWAVE_RX_PIN
+        int "mmWave UART RX GPIO"
+        default 16
+        range 0 48
+
+endmenu
+
+menu "Edge Intelligence"
+
+    config EDGE_TIER
+        int "Edge processing tier (0=raw,1=basic,2=full)"
+        default 2
+        range 0 2
+
+    config EDGE_VITAL_INTERVAL_MS
+        int "Vitals send interval (ms)"
+        default 1000
+        range 100 10000
+
+    config EDGE_TOP_K
+        int "Top-K subcarriers"
+        default 8
+        range 1 32
+
+    config EDGE_FALL_THRESH
+        int "Fall threshold (x1000)"
+        default 15000
+        range 100 50000
+
+    config EDGE_POWER_DUTY
+        int "Power duty cycle %"
+        default 100
+        range 10 100
+
+endmenu
+
+menu "AMOLED Display (S3 boards only)"
+
+    config DISPLAY_ENABLE
+        bool "Enable AMOLED display"
+        default n
+        help
+            Only for ESP32-S3 with RM67162 QSPI AMOLED.
+            Keep OFF for all classic ESP32 boards.
+
+    config DISPLAY_FPS_LIMIT
+        int "FPS limit"
+        default 30
+        range 10 60
+        depends on DISPLAY_ENABLE
+
+    config DISPLAY_BRIGHTNESS
+        int "Brightness %"
+        default 80
+        range 0 100
+        depends on DISPLAY_ENABLE
+
+    config DISPLAY_QSPI_CS
+        int "QSPI CS GPIO"   
+        default 6
+        depends on DISPLAY_ENABLE
+
+    config DISPLAY_QSPI_CLK
+        int "QSPI CLK GPIO"
+        default 47
+        depends on DISPLAY_ENABLE
+
+    config DISPLAY_QSPI_D0
+        int "QSPI D0 GPIO"
+        default 18
+        depends on DISPLAY_ENABLE
+
+    config DISPLAY_QSPI_D1
+        int "QSPI D1 GPIO"
+        default 7
+        depends on DISPLAY_ENABLE
+
+    config DISPLAY_QSPI_D2
+        int "QSPI D2 GPIO"
+        default 48
+        depends on DISPLAY_ENABLE
+
+    config DISPLAY_QSPI_D3
+        int "QSPI D3 GPIO"
+        default 5
+        depends on DISPLAY_ENABLE
+
+    config DISPLAY_BL_PIN
+        int "Backlight GPIO"
+        default 38
+        depends on DISPLAY_ENABLE
+
+endmenu
+
+menu "WASM Runtime"
+
+    config WASM_ENABLE
+        bool "Enable WASM runtime"
+        default y
+
+    config WASM_MAX_MODULES
+        int "Max WASM modules"
+        default 2
+        range 1 8
+
+    config WASM_VERIFY_SIGNATURE
+        bool "Require Ed25519 signature"
+        default y
+
+    config WASM_TIMER_INTERVAL_MS
+        int "Timer interval (ms)"
+        default 1000
+        range 100 60000
+
+endmenu
+
+menu "Mock CSI (QEMU)"
+
+    config CSI_MOCK_ENABLED
+        bool "Enable mock CSI"
+        default n
+
+    config CSI_MOCK_SKIP_WIFI_CONNECT
+        bool "Skip WiFi"
+        depends on CSI_MOCK_ENABLED
+        default y
+
+    config CSI_MOCK_SCENARIO
+        int "Scenario (0-9, 255=all)"
+        depends on CSI_MOCK_ENABLED
+        default 255
+        range 0 255
+
+    config CSI_MOCK_SCENARIO_DURATION_MS
+        int "Duration (ms)"
+        depends on CSI_MOCK_ENABLED
+        default 5000
+        range 1000 60000
+
+    config CSI_MOCK_LOG_FRAMES
+        bool "Log frames"
+        depends on CSI_MOCK_ENABLED
+        default n
+
+endmenu

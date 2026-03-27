@@ -1,1 +1,8 @@
+## ESP-IDF Managed Components
+## Display dependencies only needed when CONFIG_DISPLAY_ENABLE=y (S3 boards)
+## Uncomment below if using S3 with AMOLED display:
+# dependencies:
+#   lvgl/lvgl: "~8.3"
+#   espressif/esp_lcd_touch_cst816s: "^1.0"
+#   espressif/esp_lcd_touch: "^1.0"
 dependencies: {}
