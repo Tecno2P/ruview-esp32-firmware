@@ -1,0 +1,68 @@
+name: RuView Build
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - board: wroom
+            name: "ESP32-WROOM-32"
+            target: esp32
+          - board: wrover
+            name: "ESP32-WROVER"
+            target: esp32
+          - board: devkitc
+            name: "ESP32-DevKitC v4"
+            target: esp32
+          - board: nodemcu32s
+            name: "NodeMCU-32S"
+            target: esp32
+          - board: d1mini_esp32
+            name: "D1 Mini ESP32"
+            target: esp32
+          - board: solo1
+            name: "ESP32-SOLO-1"
+            target: esp32
+          - board: pico
+            name: "ESP32-PICO-D4"
+            target: esp32
+          - board: s3_devkitc
+            name: "ESP32-S3-DevKitC"
+            target: esp32s3
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy sdkconfig
+        run: cp boards/sdkconfig.${{ matrix.board }} sdkconfig.defaults
+
+      - name: Clone WASM3
+        run: git clone --depth 1 https://github.com/wasm3/wasm3.git components/wasm3/wasm3-src || true
+
+      - name: Build
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v5.2.5
+          target: ${{ matrix.target }}
+          path: '.'
+          command: |
+            idf.py build
+            esptool.py --chip ${{ matrix.target }} merge_bin -o build/ruview-${{ matrix.board }}-merged.bin @build/flash_args
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ruview-${{ matrix.board }}
+          path: |
+            build/ruview-csi-node.bin
+            build/bootloader/bootloader.bin
+            build/partition_table/partition-table.bin
+            build/ruview-${{ matrix.board }}-merged.bin
+          retention-days: 30
