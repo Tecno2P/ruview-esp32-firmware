@@ -18,24 +18,6 @@ jobs:
           - board: wrover
             name: "ESP32-WROVER"
             target: esp32
-          - board: devkitc
-            name: "ESP32-DevKitC v4"
-            target: esp32
-          - board: nodemcu32s
-            name: "NodeMCU-32S"
-            target: esp32
-          - board: d1mini_esp32
-            name: "D1 Mini ESP32"
-            target: esp32
-          - board: solo1
-            name: "ESP32-SOLO-1"
-            target: esp32
-          - board: pico
-            name: "ESP32-PICO-D4"
-            target: esp32
-          - board: s3_devkitc
-            name: "ESP32-S3-DevKitC"
-            target: esp32s3
 
     steps:
       - uses: actions/checkout@v4
